@@ -139,9 +139,9 @@ int main()
 		if (inputString>>L) cout<<"long\n";
 		else cout<<"empty\n";
 		
-		ostreamstream outputString;
+		ostringstream outputString;
 		int a=10;
-		outputstring<<"This"<<a<<"ok"<<endl;
+		outputString<<"This"<<a<<"ok"<<endl;
 		cout<<outputString.str();
 	} 
 	return 0;
