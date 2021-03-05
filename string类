@@ -1,0 +1,148 @@
+/*
+String类：
+@string类是模板类： typedef basic_string<char> string;
+@使用string类要包含头文件<string> 
+*/ 
+#include <iostream>
+#include <string>
+#include<sstream> 
+using namespace std;
+int main()
+{
+	//string 对象初始化 
+	string s1("Hello");
+	cout<<"s1:"<<s1<<endl;
+	cout<<s1.length()<<endl; //对象的长度用length()读取 
+	string s2(8,'x');
+	cout<<"s2:"<<s2<<endl;
+	string month="March";
+	cout<<month<<endl;
+	string s;
+	s='n';
+	cout<<"s:"<<s<<endl;
+	//string 支持流读取运算符，空格换行,\t结束 
+	string stringObject;
+	cin>>stringObject; 
+	cout<<"stringObject:"<<stringObject<<endl;
+	//string 支持getline函数,读取一整行 
+	string s0;
+	getline(cin,s0);
+	cout<<"s0:"<<s0<<endl;
+	//用=赋值
+	string s3=s1;
+	cout<<"s3:"<<s3<<endl;
+	//用assign成员函数复制
+	string s4;
+	s4.assign(s1);
+	cout<<"s4:"<<s4<<endl; 
+	//用assign成员函数部分赋值
+	string s5;
+	s5.assign(s1,1,3);//从s1中下标为1的字符开始复制3个字
+	cout<<"s5:"<<s5<<endl;
+	//单个字符复制
+	s1[1]='a';
+	cout<<"s1:"<<endl;
+	//逐个访问string对象中的字符,成员函数at会做范围检查，如果超出范围，会抛出out_of_range异常，而下标运算[]不做检查  
+	for(int i=0;i<s1.length();i++)
+	 cout<<s1.at(i)<<endl;
+	//用+运算符链接字符串
+	s1+=s2;
+	cout<<"s1:"<<s1<<endl; 
+	//用成员函数append链接字符串
+	s1.append(s2);
+	cout<<"s1:"<<s1<<endl;
+	s2.append(s1,3,s1.size());//s1.size(),s1的字符数
+	cout<<"s2:"<<endl;//从下标为3开始，s1.size()个字符，如果字符串内没有足够的字符，则复制到字符串最后一个字符 
+	cout<<"******************************************************"<<endl;
+	// 用关系比较运算符比较string的大小 ==	>	>=	<	<=	!=，返回值是bool类型 
+	// 用成员函数compare 比较string的大小。返回值 0：相等，1：大于，-1：小于
+	{
+		string s1("hello"),s2("hello"),s3("hell");
+		int f1=s1.compare(s2);
+		int f2=s1.compare(s3);
+		int f3=s1.compare(1,2,s3,0,3);
+		int f4=s1.compare(0,s1.size(),s3);
+		cout<<"f1: "<<f1<<"  "<<"f2: "<<f2<"  "<<"f3: "<<f3<<"  "<<"f4: "<<f4<<endl; 
+	} 
+	//子串 ：成员函数 substr 
+	{
+	    string s1("hello world"),s2;
+	    s2=s1.substr(4,5);//从下标4开始5个字符
+		cout<<s2<<endl; 
+	} 
+	//成员函数swap 
+	{
+		string s1("hello"),s2("world");
+		s1.swap(s2);
+		cout<<s1<<endl;
+		cout<<s2<<endl;
+	}
+	//查找string中的字符
+	{
+		//成员函数find()  
+		string s1("hello world");
+		s1.find("lo");//在s1中从前向后查找"lo" 第一次出现的地方，如果找到，返回"l"所在位置的下标，反之，返回string::npos
+		s1.find("ll",3);//从指定位置3开始查找。 
+		//成员函数rfind()
+		s1.find("lo");//在s1中从后向前查找"lo" 第一次出现的地方，如果找到，返回"l"所在位置的下标，反之，返回string::npos
+		//find_first_of()
+		s1.find_first_of("abcd");//s1中从前向后查找"abcd" 中任何一个字符第一次出现的地方，如果找到返回字母的位置，反之，返回string::npos 
+		//find_last_of() 
+        s1.find_last_of("abcd");//s1中从后向前查找"abcd" 中任何一个字符最后一次出现的地方，如果找到返回字母的位置，反之，返回string::npos
+        //find_first_not_of()  不在子串中的字母第一次出现的地方 
+		//find_last_not_of() 
+	} 
+	//删除string中的字符erase()
+	{
+		cout<<"删除string中的字符"<<endl;
+		string s1="hello world";
+		s1.erase(5);
+		cout<<"s1: "<<s1<<endl;	
+	} 
+	//替换string中的字符replace()
+	{
+		cout<<"替换string中的字符"<<endl;
+		string s1("hello world");
+		s1.replace(2,3,"haha");//将S1中下标2开始的3个字符换成"haha" 
+		cout<<s1<<endl; 
+		
+		string s2("hello world");
+		s2.replace(2,3,"haha",1,2);//将s1中下标2开始的3个字符换成"haha"中下标1开始的两个字符 
+		cout<<s2<<endl;
+	} 
+	//转换成C语言式char*字符串c_str(), data() 
+	{
+		cout<<"转换成C语言式char*字符串" <<endl;
+		string s1("hello world");
+		printf("%s\n",s1.c_str());//返回传统的const char*类型的字符串，且该字符串以'\0'结尾 
+		
+		string s2("hello world");
+		const char*p=s2.data();//返回一个char*类型的字符串，对S1的修改可能会使p1出错 
+		for(int i=0;i<s2.length();i++)
+		   printf("%c",*(p+i));
+	} 
+	//字符串流的处理
+	//除了用标准流和文件输入输出外，还可以用string进行输入输出
+	//类似于istream和ostream进行标准流输入输出，我们用istringstream和ostringstream进行字符串上的输入输出，也称内存的输入输出
+	// #include <string> #include <iostream> #include<sstream> 
+	{
+		string input("Input test 123 4.7 A");
+		istringstream inputString(input);
+		string string1,string2;
+		int i;
+		double d;
+		char c;
+		inputString>>string1>>string2>>i>>d>>c;
+		cout<<string1<<endl<<string2<<endl;
+		cout<<i<<endl<<d<<endl<<c<<endl;
+		long L;
+		if (inputString>>L) cout<<"long\n";
+		else cout<<"empty\n";
+		
+		ostreamstream outputString;
+		int a=10;
+		outputstring<<"This"<<a<<"ok"<<endl;
+		cout<<outputString.str();
+	} 
+	return 0;
+}
