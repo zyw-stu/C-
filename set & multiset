@@ -1,0 +1,79 @@
+/*
+关联容器：set multiset map multimap
+	内部元素有序排列，新元素插入的位置取决于它的值，查找速度快。
+	除了各容器都有的函数外，还支持以下成员函数
+		find：查找等于某个值的元素（x小于y和y小于x同时不成立即为相等）
+		lower_bound:查找某个下界
+		uper_bound:查找某个上界
+		equal_range:同时查找上界和下界
+		count:计算等于某个值的元素的个数
+		insert:用以插入一个元素或一个区间
+	@multiset
+		template<class Key,class Pred=less<key>,class A=allocator<key>>
+		class multiset{...};
+			#Pred 
+				计较两个元素的大小就是生成一个Pred 类型的变量，假定为op,若表达式op(x,y)的返回值为true,则x比y小。Pred的缺省类型是less<key>
+			#less 模板的定义
+				template<class T>
+				struct less: public binary_function<T , T, bool>
+				{
+					bool operator()(const T&x,const T&y){return x<y;}const;
+				};
+
+		multiset的成员函数
+			iterator find (const T &val);//在容器中查找值为val的元素，返回迭代器。如果找不到，返回end（）。
+			iterator insert(const T &val);//将val插入到容器中并返回其迭代器
+			void insert(iterator first,iterator last);//将区间[first,last)插入容器
+			int count(const T &val);//统计有多少个元素的值和val相等
+			iterator lower_bound(const T &val);//查找一个最大的位置it,使得[begin(),it)中所有的元素都比val小
+			iterator upper_bound(const T &val);//查找一个最小的位置it,使得[it,end())中所有的元素都比val大
+			pair<iterator,iterator> equal_range(const T &val);//同时求得lower_bound 和upper_bound
+			iterator erase(iterator it);//删除it指向的迭代器，返回其后面元素的迭代器
+*/
+#include <set>
+#include <iostream>
+using namespace std;
+template <class T>
+void Print(T first, T last)
+{
+	for (; first != last; ++first) cout << *first << " ";
+	cout << endl;
+}
+class A {
+private:
+	int n;
+public:
+	A(int n_) { n = n_;}
+	friend bool operator< (const A& a1, const A& a2) { return a1.n < a2.n; }
+	friend ostream& operator<<(ostream& o, const A& a2) { o << a2.n; return o; }
+	friend class MyLess;
+};
+class MyLess {
+	bool operator()(const A& a1, const A& a2) {
+		//按个位数比大小
+		return (a1.n % 10) < (a2.n % 10);
+	}
+};
+typedef multiset <A> MSET1;//MST1用小于号比较大小
+typedef multiset <A, MyLess> MSET2;//MST2用MyLess::operator()比较大小
+int main()
+{
+	const int SIZE = 6;
+	A a[SIZE] = { 4,22,19,8,33,40 };
+	MSET1 m1;
+	m1.insert(a, a + SIZE);
+	m1.insert(22);
+	cout << "1)" << m1.count(22) << endl;//输出1）2
+	cout << "2)"; Print(m1.begin(), m1.end());//输出2) 4 8 19 22 22 33 40
+	MSET1::iterator pp = m1.find(19);
+	if (pp != m1.end())//条件为真说明找到
+		cout << "found" << endl;
+	cout << "3)"; cout << *m1.lower_bound(22) << "," << *m1.upper_bound(22) << endl;//输出3）22，33
+	pp = m1.erase(m1.lower_bound(22), m1.upper_bound(22));
+	cout << "4)"; Print(m1.begin(), m1.end());//输出4）4 8 19 33 40
+	cout << "5)"; cout << *pp << endl;//输出5）33
+	MSET2 m2;//m2里的元素按照n的个位数从小到大排
+	m2.insert(a, a + SIZE);
+	cout << "6)"; Print(m2.begin(), m2.end());//输出 6）40，22，33，4，8，19
+	return 0;
+}
