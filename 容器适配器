@@ -1,0 +1,40 @@
+/*
+容器适配器 
+	stack
+		stack是先进后出的数据结构，只能插入删除访问栈顶的元素
+		可用vector,list,deque 来实现。缺省的情况下，用deque实现
+		#可进行的操作
+			push	插入操作
+			pop		弹出元素
+			top		返回栈顶元素的引用
+	queue
+		可用list,deque 来实现。缺省的情况下，用deque实现。
+		同样有push,pop,top函数。但是push发生在队尾，pop,top发生在队头。先进先出
+		有back成员函数可以返回队尾元素的引用
+	priority_queue
+		可用vector,deque 来实现。缺省的情况下，用vector实现。
+		通常用堆排序的技术实现，保证最大的元素总是在最前面。
+ 容器适配器中元素的个数
+		empty()	判断是否为空
+		size()	返回适配器中元素的个数
+
+*/
+#include <queue>
+#include <iostream>
+using namespace std;
+int main()
+{
+	priority_queue<double> pq1;
+	pq1.push(3.2); pq1.push(9.8); pq1.push(9.8); pq1.push(5.4);
+	while (!pq1.empty()) {
+		cout << pq1.top() << " ";
+		pq1.pop();
+	}//输出 9.8 9.8 5.4 3.2
+	cout << endl;
+	priority_queue<double, vector<double>, greater<double>>pq2;
+	pq2.push(3.2); pq2.push(9.8); pq2.push(9.8); pq2.push(5.4);
+	while (!pq1.empty()) {
+		cout << pq1.top() << " ";
+		pq1.pop();
+	}//输出3.2 5.4 9.8 9.8
+}
