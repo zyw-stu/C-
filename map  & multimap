@@ -1,0 +1,76 @@
+/*
+ map 和 multimap 容器里放的都是pair模板类的对象，且按照first从小到大排序
+ @multimap:
+	#定义
+		template<class Key,class T,class Pred=less<key>,class A=allocator<T>>
+		class multimap{
+			typedef pair<const Key,T> value_type;
+		};
+	#
+		multimap中的元素由<关键字，值>组成，每一个元素都是一个pair对象，关键字就是first成员变量，其值是Key
+		multimap中允许多个元素的成员变量相同。元素按照first成员变量从小到大排列，缺省情况下用less<Key>
+ @map：
+	#定义
+		template<class Key,class T,class Pred=less<key>,class A=allocator<T>>
+		class multimap{
+			typedef pair<const Key,T> value_type;
+		};
+	#
+		map中的元素都是pair模板类对象。关键字（first) 各不相同。元素按照first成员变量从小到大排列，缺省情况下用less<Key>
+	#成员函数
+		若pairs为map模板类的对象，pairs[key] 返回对关键字等于key的元素的值的引用。若没有关键字为key的元素，则会向pairs里插入一个关键字为key的元素，
+		其值用无参数构造函数初始化，并返回其值的引用。
+
+		
+*/
+#include <iostream>
+#include <map>
+using namespace std;
+
+template <class Key, class Value>
+ostream& operator <<(ostream& o, const pair <Key, Value>& p)
+{
+	o << "(" << p.first << "," << p.second << ")";
+	return o;
+}
+int main()
+{
+	{
+		typedef multimap<int, double, less<int>> mmid;
+		mmid pairs;
+		cout << "1)" << pairs.count(15) << endl;//输出 0
+		pairs.insert(mmid::value_type(15, 2.7));//typedef pair<const Key,T> value_type;
+		pairs.insert(mmid::value_type(15, 99.3));
+		cout << "2)" << pairs.count(15) << endl;//求关键字等于某值的元素个数  输出2
+		pairs.insert(mmid::value_type(30, 111.11));
+		pairs.insert(mmid::value_type(10, 22.22));
+		pairs.insert(mmid::value_type(25, 33.333));
+		pairs.insert(mmid::value_type(20, 9.3));
+		mmid::const_iterator i;
+		for (i = pairs.begin(); i != pairs.end(); i++);
+		cout << "(" << i->first << "," << i->second << ")" << ",";
+	}
+	{
+		typedef map <int, double, less<int>> mmid;
+		mmid pairs;
+		cout << "1)" << pairs.count(15) << endl;//输出0
+		pairs.insert(mmid::value_type(15, 2.7));
+		pairs.insert(make_pair(15, 99.3));//插入失败
+		cout << "2)" << pairs.count(15) << endl;//输出1
+		pairs.insert(mmid::value_type(20, 9.3));
+		mmid::iterator i;
+		cout << "3)";
+		for (i = pairs.begin(); i != pairs.end(); i++)
+			cout << *i << ",";
+		cout << endl;//输出（15，2.7） （20，9.3）
+		cout << "4)";
+		int n = pairs[40];//如果关键字中没有40的元素，则插入一个
+		for (i = pairs.begin(); i != pairs.end(); i++)
+			cout << *i << ",";    //输出（15，2.7） （20，9.3） (40,0)
+		cout << endl;
+		cout << "5)";
+		pairs[15] = 6.28;//把关键字为15的元素改为6.28
+		for (i = pairs.begin(); i != pairs.end(); i++)
+			cout << *i << ","; //输出（15，6.28） （20，9.3） (40,0)
+	}		
+}
