@@ -1,0 +1,88 @@
+/*
+函数对象：
+	若一个类中重载了运算符“（）”，则该类的对象就成为了函数对象
+*/
+#include <iostream>
+#include <vector>
+#include <list>
+#include <algorithm>
+#include <numeric>
+#include <functional>
+using namespace std;
+
+	int sumSquare(int total, int value)
+	{
+		return total + value * value;
+	}
+	template <class T>
+	void PrintInterval(T first, T last)
+	{
+		for (; first != last; ++first)
+			cout << *first << " ";
+		cout << endl;
+	}
+	template <class T>
+	class SumPowers
+	{
+	private:
+		int power;
+	public:
+		SumPowers(int p) :power(p) {}
+		const T operator()(const T& total, const T& value)
+		{//计算value的power次方，加到total上
+			T v = value;
+			for (int i = 0; i < power - 1; ++i)
+				v = v * value;
+			return total + v;
+		}
+	};
+	//自定义容器比较器op: x小于y等价于op(x,y)返回值为true
+	class MyLess {
+	public:
+		bool operator()(const int& c1, const int& c2) {
+			return (c1 % 10) < (c2 % 10);
+		}	
+	};
+	template <class T,class Pred>
+	T MyMax(T first, T last, Pred myless)
+	{
+		T tmpMax = first;
+		for (; first != last; ++first)
+			if (myless(*tmpMax, *first))
+				tmpMax = first;
+		return tmpMax;
+	}
+	template <class T>
+	void Print(T first, T last)
+	{
+		for (; first != last; ++first) cout << *first << ",";
+	}
+	int main()
+	{ 
+		{//函数对象的应用实例
+			const int SIZE = 10;
+			int a1[] = { 1,2,3,4,5,6,7,8,9,10 };
+			vector <int>v(a1, a1 + SIZE);
+			cout << "1)"; PrintInterval(v.begin(), v.end());
+			int result = accumulate(v.begin(), v.end(), 0, sumSquare);
+			cout << "2) 平方和：" << result << endl;
+			result = accumulate(v.begin(), v.end(), 0, SumPowers<int>(3));
+			cout << "3) 立方和：" << result << endl;
+			result = accumulate(v.begin(), v.end(), 0, SumPowers<int>(4));
+			cout << "4) 4次方和" << result;
+
+		}
+		{//greater的应用实例
+			const int SIZE = 5;
+			int a[SIZE] = { 5,21,14,2,3 };
+			list<int> lst(a, a + SIZE);
+			lst.sort(MyLess());
+			Print(lst.begin(), lst.end());
+			cout << endl;
+			lst.sort(greater<int>());//greater<int> 是个对象
+			Print(lst.begin(), lst.end());
+			cout << endl;
+		}
+		return 0;
+	}
+
